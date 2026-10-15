@@ -4,11 +4,12 @@ import { Link, useNavigate } from "react-router";
 import { CiEdit as Editar} from "react-icons/ci";
 import { RiDeleteBin6Line as Excluir } from "react-icons/ri";
 
+const WEB_APP_URL = import.meta.env.VITE_API_URL;
+
 export default function Produtos() {
   document.title = "Produtos";
 
-  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwb9BxDJZqP3KGV7dNBNwHQycsKPZjHYxVbx39Cx0GQgI7mF6h7YA8Ic-5omuZgMDkr/exec";
-
+                       
   //REF do DIALOG para o produto que será deletado:
   const dialogRef = useRef<HTMLDialogElement>(null);
   //STATE do DIALOG para o produto que será deletado:
@@ -44,16 +45,22 @@ export default function Produtos() {
         // const data:TipoProduto[] = await response.json();
         // console.log(data);
 
-        const data:any[][] = await response.json();
-        const prod = data.slice(1).map((p)=>({
-          id:p[0],
-          nome:p[1],
-          preco:p[2],
-          estoque:p[3],
-          avatar:p[4],
-        }))
+        const resultado = await response.json();
+        // const prod = data.slice(1).map((p)=>({
+        //   id:p[0],
+        //   nome:p[1],
+        //   preco:p[2],
+        //   estoque:p[3],
+        //   avatar:p[4],
+        // }))
 
-        setProdutos(prod); //Atualizando a lista de produtos
+        if(resultado.status === "error"){
+          throw new Error(`Erro na listagem de produtos: ${resultado.message}`);
+        }
+
+        console.log(resultado.data);
+
+        setProdutos(resultado.data); //Atualizando a lista de produtos
         //setProdutos(data); //Atualizando a lista de produtos
 
       } catch (error) {
